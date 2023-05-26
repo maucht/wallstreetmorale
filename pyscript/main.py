@@ -8,10 +8,13 @@ from nrclex import NRCLex
 import praw
 import datetime
 
+# emotion detection does count as AI btw according to chatgpt
+# it falls under the category of Natural Language Processing
+
 
 def getRefinedIndividualMoodDict(currMoodDict): # run in each submission iteration, end result should be only positive/negative
     refinedDict = {}
-    IRREV_MODIFER = 0.75
+    IRREV_MODIFER = 1
     if(currMoodDict['positive'] > currMoodDict['negative']):
         # nullify anger and fear and sadness, anticipation
         # redirect 0.5 - 0.75 of surprise and joy to positive
@@ -97,7 +100,7 @@ def isLessThanMonthOld(submissionMonth, submissionDay): # there really isnt any 
          return True
     else:
         return False
-def sameDay(submissionDay):
+def sameDay(submissionDay): # dont need this
     today = str(datetime.date.today())
     todaySplit = today.split("-")
     todayDay = int(todaySplit[2])
@@ -127,54 +130,35 @@ for submission in filter(lambda s: s.media is None and s.selftext != '', reddit.
     submission_date_split = submission_date_time_string.split("-")
     submission_month = int(submission_date_split[1])
     submission_day = int(submission_date_split[2][0:2])
+    
     emotion = NRCLex(submission.selftext)
+
+
     if('positive' not in emotion.raw_emotion_scores or 'negative' not in emotion.raw_emotion_scores):
         continue
 
+    refinedEmotionScore = getRefinedIndividualMoodDict(emotion.raw_emotion_scores)
 
     print("-------------------------------------------------")
     print("COUNT", i)
     
     print(submission.selftext)
-    print(getRefinedIndividualMoodDict(emotion.raw_emotion_scores))
+    print(refinedEmotionScore)
     
 
     # outfile.write(submission.selftext) 
     # dont really need this
     
-    for key in emotion.raw_emotion_scores:
-        if(key == 'trust'):
-            continue
-        elif(key not in totalMoodDict):
-            totalMoodDict[key] = emotion.raw_emotion_scores[key]
+    for key in refinedEmotionScore:
+        if(key not in totalMoodDict):
+            totalMoodDict[key] = refinedEmotionScore[key]
         else:
-            totalMoodDict[key] += emotion.raw_emotion_scores[key] 
+            totalMoodDict[key] += refinedEmotionScore[key] 
 print(totalMoodDict) # this works great.
 outfile.close()
 
-
-    #{'anticipation': 1581, 'negative': 1706, 'trust': 1582, 
-    # 'anger': 744, 'positive': 2452, 'joy': 719, 'fear': 813, 'disgust': 295, 'sadness': 700, 'surprise': 533}
-
-
-
-# Successfully write to submissioncontent, on the root directory
-# at this point run the emotion detection and send it to the backend
-# frontend picks that data up and fills out a scale to the viewer
-# ai in 3 days
-
-# im thinking to calculate emotion score do the following:
-# Take total count of posts
-# Read each post individually and add score to respective variable score counts
-# Take average at the end
-# ???
-# Profit.
-
-# instead, i could collect the emotions in place, without having to iterate through the submission list from the outfile
-# this would speed things up
-
-# ultimately, this script needs to be a cron job, run every day
-
-# create a case in the frontend where if there are 0 posts, set to neutral
+# send this data to django backend, then pickup from the frontend
+# create a horizontal slider scale on the frontend
+# if dict is 50/50, slider position should be in middle (Neutral)
 
     
