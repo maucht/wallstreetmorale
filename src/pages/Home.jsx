@@ -1,11 +1,37 @@
-import React, { Component } from 'react'
+import React, { Component, createRef } from 'react'
 import "../css/main.css"
 
 export default class Home extends Component {
+  state = {
+    rate: 0.0 // 0.0 = midpoint, -1.0 leftmost, 1.0 rightmost
+  }
+  
+
+  meter = createRef()
+  pointer = createRef()
+
+  componentDidMount(){
+    this.movePointer()
+  }
+  setRate = () =>{
+    // axios
+  }
   movePointer = () =>{
     console.log("Move Pointer called")
-    const pointer = document.getElementById("pointer")
-    //pointer.style.marginLeft = "33px"
+    const pointer = this.pointer.current
+    const meter = this.meter.current
+    if(pointer && meter){
+      const meterImage = meter.querySelector("img")
+      meterImage.addEventListener('load', () => {
+        const meterWidth = meterImage.offsetWidth
+        console.log("Mood Meter width:", meterWidth);
+        // if rate is 98%, set marginleft to 98% * meterWidth
+
+        console.log("ADJUSTING: " + ((this.state.rate) * (meterWidth)).toString())
+        pointer.style.marginLeft = (((this.state.rate) * (meterWidth))).toString() + "px"
+      });
+    }
+
 
   }
   render() {
@@ -15,12 +41,12 @@ export default class Home extends Component {
         <div className="flex items-center justify-center text-center relative h-full bottom-28 flex-col">
             <h1 className="text-white text-5xl font-mono font-bold pb-12">r/Wallstreetbets mood of the day:</h1>
 
-            <div className="rounded-lg min-h-32 max-h-32 flex flex-col align-bottom pl-12 pr-12">
+            <div className="rounded-lg min-h-32 max-h-32 flex flex-col align-bottom pl-12 pr-12" ref={this.meter}>
               <img src="meterv2.png" alt="Mood Meter" className="h-full"/>
             </div>
 
-            <div className='h-48'>
-              <img  id = "pointer" src = "pointer.png" alt="Mood Pointer" className="h-1/2"/>
+            <div className='h-48' ref = {this.pointer}>
+              <img src = "pointerv2.png" alt="Mood Pointer" className="h-1/4"/>
             </div>
         </div>
         {this.movePointer()}
