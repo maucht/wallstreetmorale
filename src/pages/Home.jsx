@@ -1,4 +1,5 @@
 import React, { Component, createRef } from 'react'
+import axios from 'axios'
 import "../css/main.css"
 
 export default class Home extends Component {
@@ -12,9 +13,21 @@ export default class Home extends Component {
 
   componentDidMount(){
     this.movePointer()
+    this.setRate()
   }
   setRate = () =>{
     // axios
+    //axios.defaults.baseURL = "http://localhost:8000/"
+    let instance = axios.create({
+      baseURL: "http://127.0.0.1:8000/"
+    })
+
+
+    let fetchedStats = null
+    instance.get("api/dailystats").then(response =>
+      console.log(response)
+    )
+    
   }
   movePointer = () =>{
     console.log("Move Pointer called")
