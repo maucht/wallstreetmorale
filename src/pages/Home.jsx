@@ -11,15 +11,15 @@ export default class Home extends Component {
     pointerMoved: false,
   };
 
-  meter = createRef();
-  pointer = createRef();
+  meter = createRef()
+  pointer = createRef()
 
   componentDidMount() {
     if (!this.state.statsLoaded) {
-      this.setRate();
+      this.setRate()
     }
     if (!this.state.pointerMoved) {
-      this.movePointer();
+      this.movePointer()
     }
   }
   componentDidUpdate(prevProps, prevState) {
@@ -30,38 +30,47 @@ export default class Home extends Component {
 
   setRate = () => {
     let instance = axios.create({
-      baseURL: 'http://127.0.0.1:8000/',
+      baseURL: 'https://wsmapi.onrender.com/',
     });
 
     instance.get('api/dailystats').then(response => {
       console.log(response.data.datas[0])
-      const posStat = response.data.datas[0]['posStat'];
-      const negStat = response.data.datas[0]['negStat'];
-      const rate = -1 + 2 * (posStat / (posStat + negStat));
+      const posStat = response.data.datas[0]['posStat']
+      const negStat = response.data.datas[0]['negStat']
 
       this.setState({
         posStat,
         negStat,
-        rate,
         statsLoaded: true,
-      });
+      }, () => {
+        const rate = -1 + 2 * (this.state.posStat / (this.state.posStat + this.state.negStat));
+        this.setState({
+          rate: rate
+        })
+      }
+      );
+      
     });
   };
 
   movePointer = () => {
     if (this.state.statsLoaded) {
       console.log('Move Pointer called');
-      const pointer = this.pointer.current;
-      const meter = this.meter.current;
+      console.log("Positive:",this.state.posStat)
+      console.log("Negative:",this.state.negStat)
+      
 
-      if (pointer && meter && this.state.rate != null) {
-        const meterImage = meter.querySelector('img');
+      const pointer = this.pointer.current
+      const meter = this.meter.current
+
+      if (pointer && meter) {
+        const meterImage = meter.querySelector('img')
         meterImage.addEventListener('load', () => {
-          const meterWidth = meterImage.offsetWidth;
-          console.log('Mood Meter width:', meterWidth);
-          console.log('Rate:', this.state.rate);
+          const meterWidth = meterImage.offsetWidth
+          console.log('Mood Meter width:', meterWidth)
+          console.log('Rate:', this.state.rate)
 
-          pointer.style.marginLeft = `${this.state.rate * meterWidth}px`;
+          pointer.style.marginLeft = `${this.state.rate * meterWidth}px`
         });
       }
 
