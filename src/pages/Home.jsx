@@ -29,21 +29,7 @@ export default class Home extends Component {
   }
 
   setRate = () => {
-    // EXPERIMENTAL START
-    const { exec } = require('child_process');
-    exec('cd ../../pyscript && python main.py', (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error: ${error.message}`);
-        return;
-      }
-      if (stderr) {
-        console.error(`stderr: ${stderr}`);
-        return;
-      }
-      console.log(`stdout: ${stdout}`);
-    });
 
-    // EXPERIMENTAL END
 
     let instance = axios.create({
       baseURL: 'https://wsmapi.onrender.com/',
@@ -61,26 +47,18 @@ export default class Home extends Component {
       this.setState({
         posStat,
         negStat,
-<<<<<<< HEAD
         prevPosStat,
         prevNegStat
-=======
-        statsLoaded: true,
->>>>>>> parent of d399c25 (improvements to infobubble)
       }, () => {
         const rate = -1 + 2 * (this.state.posStat / (this.state.posStat + this.state.negStat));
         const prevRate = -1 + 2 * (this.state.prevPosStat / (this.state.prevPosStat + this.state.prevNegStat));
         console.log("PREV RATE:",prevRate)
         this.setState({
-<<<<<<< HEAD
           rate: rate,
           prevRate,
           statsLoaded: true,
         }, ()=>{
           this.movePointer()
-=======
-          rate: rate
->>>>>>> parent of d399c25 (improvements to infobubble)
         })
       }
       );
@@ -99,11 +77,10 @@ export default class Home extends Component {
       const meter = this.meter.current
 
       if (pointer && meter) {
-<<<<<<< HEAD
         const meterWidth = meter.offsetWidth
-        const calculatedMovement = rate * meterWidth
+        const calculatedMovement = this.state.rate * meterWidth
         console.log('Mood Meter width:', meterWidth)
-        console.log('Rate:', rate)
+        console.log('Rate:', this.state.rate)
         
         if(calculatedMovement >= 0){
           pointer.style.marginRight = "0px"
@@ -114,16 +91,6 @@ export default class Home extends Component {
           pointer.style.marginRight = `${-calculatedMovement}px`
         }
         
-=======
-        const meterImage = meter.querySelector('img')
-        meterImage.addEventListener('load', () => {
-          const meterWidth = meterImage.offsetWidth
-          console.log('Mood Meter width:', meterWidth)
-          console.log('Rate:', this.state.rate)
-
-          pointer.style.marginLeft = `${this.state.rate * meterWidth}px`
-        });
->>>>>>> parent of d399c25 (improvements to infobubble)
       }
 
       this.setState({
@@ -131,6 +98,32 @@ export default class Home extends Component {
       });
     }
   };
+  categorizeRate = () =>{
+    if(this.state.rate === 1.0){
+      return "Perfect"
+    }
+    else if(this.state.rate >= 0.5){
+      return "Very Good"
+    }
+    else if(this.state.rate > 0.0){
+      return "Good"
+    }
+    else if(this.state.rate === 0.0){
+      return "Neutral"
+    }
+    else if(this.state.rate >= -0.5){
+      return "Bad"
+    }
+    else if(this.state.rate > -1.0){
+      return "Very Bad"
+    }
+    else if(this.state.rate === -1.0){
+      return "Terrible"
+    }
+    else{ // this shouldn't happen
+      return "Neutral"
+    }
+  }
 
   render() {
     return (
@@ -138,19 +131,13 @@ export default class Home extends Component {
         <div className="flex items-center justify-center text-center relative h-full bottom-28 flex-col">
           <h1 className="text-white text-5xl font-mono font-bold pb-12">r/Wallstreetbets mood of the day:</h1>
 
-<<<<<<< HEAD
           <div className="rounded-lg min-h-32 max-h-32 flex flex-col align-bottom" ref={this.meter}>
             <img src="meterv2.png" alt="Mood Meter"  className="h-full w-full" />
-=======
-          <div className="rounded-lg min-h-32 max-h-32 flex flex-col align-bottom pl-12 pr-12" ref={this.meter}>
-            <img src="meterv2.png" alt="Mood Meter" className="h-full" />
->>>>>>> parent of d399c25 (improvements to infobubble)
           </div>
 
           <div className="h-48" ref={this.pointer}>
             <img src="pointerv2.png" alt="Mood Pointer" className="h-1/4" />
           </div>
-<<<<<<< HEAD
 
           <div id = "infoBubble" className = " h-42 w-96 bg-white rounded-3xl border-8 flex items-center p-8 flex-row">
             <h1 id = "rateNumDisplay" 
@@ -176,8 +163,6 @@ export default class Home extends Component {
 
           </div>
 
-=======
->>>>>>> parent of d399c25 (improvements to infobubble)
         </div>
       </div>
     );
