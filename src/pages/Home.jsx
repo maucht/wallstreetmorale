@@ -34,15 +34,18 @@ export default class Home extends Component {
     let instance = axios.create({
       baseURL: 'https://wsmapi.onrender.com/',
     });
+    /* EXPERIMENTAL START
+    instance.get('execute-script').then(response=>{
+      console.log(response.data["output"]["today"]) // working
+    })
+    */ 
+    instance.get('execute-script').then(response => {
 
-    instance.get('api/dailystats').then(response => {
-      console.log(response.data.datas[0])
-      const resLength = response.data.datas.length
-      const posStat = response.data.datas[resLength - 1]['posStat']
-      const negStat = response.data.datas[resLength - 1]['negStat']
+      const posStat = Number(response.data["output"]["today"]["positive"])
+      const negStat = Number(response.data["output"]["today"]["negative"])
 
-      const prevPosStat = response.data.datas[resLength - 2]['posStat']
-      const prevNegStat = response.data.datas[resLength - 2]['negStat']
+      const prevPosStat = Number(response.data["output"]["yesterday"]["positive"])
+      const prevNegStat = Number(response.data["output"]["yesterday"]["negative"])
 
       this.setState({
         posStat,
@@ -126,6 +129,7 @@ export default class Home extends Component {
   }
 
   render() {
+    if(this.state.statsLoaded){
     return (
       <div className="bg-steelblue h-full w-full absolute top-0 left-0">
         <div className="flex items-center justify-center text-center relative h-full bottom-28 flex-col">
@@ -143,10 +147,9 @@ export default class Home extends Component {
             <h1 id = "rateNumDisplay" 
             className = {(this.state.rate > 0 ? "text-green-600" : "text-red-700") + " font-nunito-bold text-4xl order-1"}
             
-            >{(this.state.rate !== 1.00) ? 
-              this.state.posStat / (this.state.posStat + this.state.negStat).toPrecision(2).toString().substring(2) :
-              this.state.posStat / (this.state.posStat + this.state.negStat).toPrecision(2).toString().substring(0) + "00"
-            }%</h1>
+            >{
+              (this.state.posStat / (this.state.posStat + this.state.negStat)).toLocaleString(undefined,{style: 'percent', maximumFractionDigits:0, maximumSignificantDigits:2})
+            }</h1>
 
             <div className=" h-3/4 border-r border-gray-400 border-2 relative left-1/2 order-2"></div>
             <h1 id = "rateCategory"
@@ -156,15 +159,23 @@ export default class Home extends Component {
             <h1
             id = "rateDelta"
             className = " order-4 font-nunito-bold text-2xl relative left-1/3"
-            >{(this.state.prevRate !== 1.00) ? 
-              this.state.prevPosStat / (this.state.prevPosStat + this.state.prevNegStat).toPrecision(2).toString().substring(2) :
-              this.state.prevPosStat / (this.state.prevPosStat + this.state.prevNegStat).toPrecision(2).toString().substring(0) + "00"
-            }%</h1>
+            >{((this.state.posStat / (this.state.posStat + this.state.negStat)) 
+            - (this.state.prevPosStat / (this.state.prevPosStat + this.state.prevNegStat))).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:1, maximumSignificantDigits:2})
+            }</h1>
 
           </div>
 
         </div>
+        
       </div>
-    );
+    )}
+    else{ // loading screen works great
+      return(
+      <div className="bg-steelblue h-full w-full absolute top-0 left-0">
+        <h1>LOADING...</h1>
+        {this.setRate()}
+      </div>
+      )
+    }
   }
 }
