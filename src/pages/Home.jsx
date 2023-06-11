@@ -132,11 +132,11 @@ export default class Home extends Component {
     if(this.state.statsLoaded){
     return (
       <div className="bg-steelblue h-full w-full absolute top-0 left-0">
-        <div className="flex items-center justify-center text-center relative h-full bottom-28 flex-col">
+        <div className="flex items-center justify-center text-center relative h-full bottom-24 flex-col">
           <h1 className="text-white text-5xl font-mono font-bold pb-12">r/Wallstreetbets mood of the day:</h1>
 
           <div className="rounded-lg min-h-32 max-h-32 flex flex-col align-bottom" ref={this.meter}>
-            <img src="meterv2.png" alt="Mood Meter"  className="h-full w-full" />
+            <img src="meterSaturated.png" alt="Mood Meter"  className="h-full w-full" />
           </div>
 
           <div className="h-48" ref={this.pointer}>
@@ -158,10 +158,15 @@ export default class Home extends Component {
 
             <h1
             id = "rateDelta"
-            className = " order-4 font-nunito-bold text-2xl relative left-1/3"
+            className = {((this.state.posStat / (this.state.posStat + this.state.negStat)) 
+            - (this.state.prevPosStat / (this.state.prevPosStat + this.state.prevNegStat))).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:1, maximumSignificantDigits:2})
+            > 0 ? "text-green-800" : "text-red-800" +
+            " order-4 font-nunito-bold text-2xl relative left-1/3 ml-3" }
             >{((this.state.posStat / (this.state.posStat + this.state.negStat)) 
             - (this.state.prevPosStat / (this.state.prevPosStat + this.state.prevNegStat))).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:1, maximumSignificantDigits:2})
-            }</h1>
+            }
+            <h3>Change</h3>
+            </h1>
 
           </div>
 
