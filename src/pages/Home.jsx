@@ -17,6 +17,7 @@ export default class Home extends Component {
   componentDidMount() {
     if (!this.state.statsLoaded) {
       this.setRate()
+      document.title = "WallStreetMorale"
     }
     if (!this.state.pointerMoved) {
       this.movePointer()
@@ -31,7 +32,7 @@ export default class Home extends Component {
   setRate = () => {
 
 
-    let instance = axios.create({
+    let instance = axios.create({ // access rest api
       baseURL: 'https://wsmapi.onrender.com/',
     });
     /* EXPERIMENTAL START
