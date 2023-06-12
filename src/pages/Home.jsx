@@ -67,6 +67,7 @@ export default class Home extends Component {
       );
       
     });
+    this.movePointer() // testing this to speed things up. remove if needed.
   };
 
   movePointer = () => {
@@ -158,14 +159,12 @@ export default class Home extends Component {
 
             <h1
             id = "rateDelta"
-            className = {((this.state.posStat / (this.state.posStat + this.state.negStat)) 
-            - (this.state.prevPosStat / (this.state.prevPosStat + this.state.prevNegStat))).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:1, maximumSignificantDigits:2})
-            > 0 ? "text-green-800" : "text-red-800" +
+            className = {(this.state.rate > this.state.prevRate ? "text-green-600" : "text-red-600") +
             " order-4 font-nunito-bold text-2xl relative left-1/3 ml-3" }
             >{((this.state.posStat / (this.state.posStat + this.state.negStat)) 
             - (this.state.prevPosStat / (this.state.prevPosStat + this.state.prevNegStat))).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:1, maximumSignificantDigits:2})
             }
-            <h3>Change</h3>
+            <h1>Change</h1>
             </h1>
 
           </div>
@@ -177,7 +176,11 @@ export default class Home extends Component {
     else{ // loading screen works great
       return(
       <div className="bg-steelblue h-full w-full absolute top-0 left-0">
-        <h1>LOADING...</h1>
+        <div className="flex items-center justify-center text-center relative h-full bottom-24 flex-col">
+          <h1 className="text-white text-5xl font-mono font-bold pb-12">LOADING...</h1>
+          <h1 className="text-white text-3xl font-mono font-bold pb-12">May take 1-2 minutes</h1>
+          
+        </div>
         {this.setRate()}
       </div>
       )
