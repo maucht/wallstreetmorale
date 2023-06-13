@@ -155,13 +155,13 @@ export default class Home extends Component {
 
             <div className=" h-3/4 border-r border-gray-400 border-2 relative left-1/2 order-2"></div>
             <h1 id = "rateCategory"
-            className = {(this.state.rate > 0 ? "text-green-600" : "text-red-700") + " relative font-nunito-bold text-2xl order-3 left-6"}
+            className = {(this.state.rate > 0 ? "text-green-600" : "text-red-700") + " relative font-nunito-bold text-2xl order-3 left-3"}
             >{this.categorizeRate()}</h1>
 
             <h1
             id = "rateDelta"
             className = {(this.state.rate > this.state.prevRate ? "text-green-600" : "text-red-600") +
-            " order-4 font-nunito-bold text-2xl relative left-1/3 ml-3" }
+            " order-4 font-nunito-bold text-2xl relative left-1/3 mr-1" }
             >{((this.state.posStat / (this.state.posStat + this.state.negStat)) 
             - (this.state.prevPosStat / (this.state.prevPosStat + this.state.prevNegStat))).toLocaleString(undefined,{style: 'percent', minimumFractionDigits:1, maximumSignificantDigits:2})
             }
